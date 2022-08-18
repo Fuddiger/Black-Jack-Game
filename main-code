@@ -1,0 +1,319 @@
+import random
+import time
+from IPython.display import clear_output
+
+suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Blank':0, 'Two':2, 'Three':3, 'Four':4, 'Five':5, 'Six':6, 'Seven':7, 'Eight':8, 
+            'Nine':9, 'Ten':10, 'Jack':10, 'Queen':10, 'King':10, 'Ace':11}
+
+#Create a card object
+class Card:
+    def __init__(self, rank, suit):
+        self.rank = rank
+        self.suit = suit
+        self.value = values[rank]
+    def __str__(self):
+        return self.rank + ' of ' + self.suit
+
+#Create a deck object
+class Deck:
+    def __init__(self):
+        self.cards = []
+        for suit in suits:
+            for rank in ranks:
+                self.cards.append(Card(rank,suit))
+                
+    def __str__(self):
+        deck_list = ''
+        for card in self.cards:
+            deck_list += card.__str__() + '\n'
+        return deck_list
+        
+    def shuffle(self):
+        random.shuffle(self.cards)
+    
+    def deal_card(self,player):
+        card = self.cards.pop()
+        player.hand.cards.append(card)
+        player.hand.display_cards.append(print_card(card.rank,card.suit))
+        player.hand.length += 1
+        
+    #Create a player object
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.balance = 200
+        self.hand = Hand()
+        self.bet = 0
+    
+    def __str__(self):
+        return f"Name: {self.name}\nBalance: {self.balance}"
+    
+class Hand:
+    def __init__(self):
+            self.cards = []
+            self.display_cards = []
+            self.length = 0
+            self.value = 0
+                        
+    def __str__(self):
+        for card in self.cards:
+            print(card)
+        return ""
+    
+      
+    
+def initiate_game():
+    is_valid = False
+        
+    while is_valid == False:
+        name = input("PLease enter your name: ").capitalize()
+        if len(name) > 0:
+            is_valid = True
+        else:
+            pass    
+        return name
+
+def blank_card(dealer):
+    hidden_card = Card('Blank', 'Spades')
+    dealer.hand.display_cards.append([" _____ ",f"|XXXXX|",f"|XXXXX|",f"|XXXXX|"," ̅ ̅ ̅ ̅ ̅  "])
+    dealer.hand.length += 1
+    dealer.hand.cards.append(hidden_card)
+
+def remove_blank(dealer):
+    card = game_deck.cards.pop()
+    dealer.hand.cards[0] = card
+    dealer.hand.display_cards[0] = print_card(card.rank,card.suit)
+            
+def print_card(rank,suit):
+    suit_display = {'Blank':"",'Hearts':"♥", 'Diamonds':"♦", 'Spades':"♠", 'Clubs':"♣"}
+    rank_display = {'Blank':"",'Two':"2", 'Three':"3", 'Four':'4', 'Five':'5', 'Six':'6', 'Seven':'7', 'Eight':'8', 
+            'Nine':'9', 'Ten':'10', 'Jack':"J", 'Queen':"Q", 'King':"K", 'Ace':"A"}
+    for item in suit_display:
+        if suit == item:
+            card_suit = suit_display[item]
+        else:
+            pass
+    for item in rank_display:
+        if rank == item:
+            card_rank = rank_display[item]
+        else:
+            pass
+    if card_rank == '10':
+        return [" _____ ",f"|{card_rank}   |",f"|  {card_suit}  |",f"|   {card_rank}|"," ̅ ̅ ̅ ̅ ̅  "]
+    else:
+        return [" _____ ",f"|{card_rank}    |",f"|  {card_suit}  |",f"|    {card_rank}|"," ̅ ̅ ̅ ̅ ̅  "]
+
+def display_hand(dealer,player):
+    
+    x = dealer.hand.length
+    y = player.hand.length
+    
+    print(f'{dealer.name}: {dealer.hand.value}')
+    
+    if x == 2:    
+        for a,b in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1]):
+            print(f"{a} {b}")
+    elif x == 3:
+        for a,b,c in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],dealer.hand.display_cards[2]):
+            print(f"{a} {b} {c}")
+    elif x == 4:
+        for a,b,c,d in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],dealer.hand.display_cards[2],dealer.hand.display_cards[3]):
+            print(f"{a} {b} {c} {d}")
+    elif x == 5:
+        for a,b,c,d,e in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],dealer.hand.display_cards[2],dealer.hand.display_cards[3],dealer.hand.display_cards[4]):
+            print(f"{a} {b} {c} {d} {e}")
+    elif x == 6:
+        for a,b,c,d,e,f in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],dealer.hand.display_cards[2],dealer.hand.display_cards[3],dealer.hand.display_cards[4],dealer.hand.display_cards[5]):
+            print(f"{a} {b} {c} {d} {e} {f}")
+    elif x == 7:
+        for a,b,c,d,e,f,g in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],dealer.hand.display_cards[2],dealer.hand.display_cards[3],dealer.hand.display_cards[4],dealer.hand.display_cards[5],dealer.hand.display_cards[6]):
+            print(f"{a} {b} {c} {d} {e} {f} {g}")
+    
+    print(f'{player.name}: {player.hand.value}')
+    print(f'Bet: {player.bet}$')
+    if y == 2:
+        for a,b in zip(player.hand.display_cards[0], player.hand.display_cards[1]):
+            print(f"{a} {b}")
+    elif y == 3:
+        for a,b,c in zip(player.hand.display_cards[0], player.hand.display_cards[1],player.hand.display_cards[2]):
+            print(f"{a} {b} {c}")
+    elif y == 4:
+        for a,b,c,d in zip(player.hand.display_cards[0], player.hand.display_cards[1],player.hand.display_cards[2],player.hand.display_cards[3]):
+            print(f"{a} {b} {c} {d}")
+    elif y == 5:
+        for a,b,c,d,e in zip(player.hand.display_cards[0], player.hand.display_cards[1],player.hand.display_cards[2],player.hand.display_cards[3],player.hand.display_cards[4]):
+            print(f"{a} {b} {c} {d} {e}")
+    elif y == 6:
+        for a,b,c,d,e,f in zip(player.hand.display_cards[0], player.hand.display_cards[1],player.hand.display_cards[2],player.hand.display_cards[3],player.hand.display_cards[4],player.hand.display_cards[5]):
+            print(f"{a} {b} {c} {d} {e} {f}")
+    elif y == 7:
+        for a,b,c,d,e,f,g in zip(player.hand.display_cards[0], player.hand.display_cards[1],player.hand.display_cards[2],player.hand.display_cards[3],player.hand.display_cards[4],player.hand.display_cards[5],player.hand.display_cards[6]):
+            print(f"{a} {b} {c} {d} {e} {f} {g}")
+    
+def game_start():
+    player.bet = 0
+    player.hand.cards = []
+    player.hand.display_cards = []
+    player.hand.length = 0
+    game_deck.deal_card(player)
+    game_deck.deal_card(player)
+    blank_card(dealer)
+    game_deck.deal_card(dealer)   
+
+def ask_bet(player):
+    is_valid = False
+    print(f"{player.name} you have {player.balance}$")
+    while is_valid == False:
+        amount = input("PLease choose an amount to bet for this hand: $")
+        try:
+    
+            amount = int(amount)
+            if amount > player.balance or amount == 0:
+                print(f'Choose an amount within your balance of {player.balance}$!')
+            else:
+                is_valid = True
+                player.bet = amount
+                player.balance -= amount
+        except:
+            pass
+    
+def hit_me(player):
+        is_valid = False
+        print(f"You have {player.hand.value}")
+        if player.hand.value >= 21:
+            print('You scored a 21!')
+            time.sleep(3)
+            return False
+        else:
+            while is_valid == False:
+                want_card = input("Would you like another card?(y/n): ")
+                if want_card.lower() == 'y' or want_card.lower() == 'n':
+                    is_valid = True
+                    if want_card.lower() == 'y':
+                        return True
+                    else:
+                        return False
+                else:
+                    pass        
+def dealer_hit():
+    if dealer.hand.value < 17:
+        return True
+    else:
+        return False
+
+            
+def check_bust(player):
+    
+    aces = []
+    player.hand.value = 0
+    for x in player.hand.cards:
+        if x.rank == "Ace":
+            aces.append(x.rank)
+            player.hand.value += x.value
+        else:
+            player.hand.value += x.value
+        
+    for ace in aces:
+        if player.hand.value > 21:
+            player.hand.value -= 10
+        else:
+            break
+    if player.hand.value > 21:
+        return True
+    else:
+        return False
+    
+    
+def decide_winner(player,dealer):
+    if player_bust == True:
+        print(f'{player.name}, you went bust, your new balance is {player.balance}$')
+    elif dealer_bust == True:
+        player.bet *= 2
+        player.balance += player.bet
+        print(f'Dealer went bust, your new balance is {player.balance}$')
+        
+    elif player.hand.value > dealer.hand.value:
+        player.bet *= 2
+        player.balance += player.bet
+        print(f'{player.name} wins, your new balance is {player.balance}$')
+    elif player.hand.value == dealer.hand.value:
+        player.balance += player.bet
+        print(f"It's a draw, your balance is back to {player.balance}$")
+    else:
+        print(f"Dealer wins, your balance is {player.balance}$")
+
+def replay():
+    is_valid = False
+    while is_valid == False:
+        retry = input("Want to try again?(y/n): ")
+        if retry.lower() == 'y' or retry.lower() == 'n':
+            if retry.lower() == 'y':
+                return True
+            else:
+                return False
+        else:
+            pass
+
+play_again = True
+print("Welcome to Fuddy's C-R-A-Z-Y Black Jack!")
+player = Player(initiate_game())
+
+while play_again == True:
+    turn_over = False
+    dealer_turn = True
+    dealer_bust = False
+    player_bust = False
+    game_deck = Deck()
+    game_deck.shuffle()
+    dealer = Player("Dealer")
+    game_start()
+    ask_bet(player)
+    check_bust(dealer)
+    while turn_over == False:
+        clear_output()
+        if check_bust(player):
+            player_bust = True
+            break
+        else:
+            pass
+        display_hand(dealer,player)
+        get_card = hit_me(player)
+        if get_card:
+            game_deck.deal_card(player)
+        else:
+            turn_over = True
+        
+        
+    if player_bust != True:
+        remove_blank(dealer)
+        while dealer_turn == True:
+            clear_output()
+            if check_bust(dealer):
+                dealer_bust = True
+                break
+            else:
+                pass
+            display_hand(dealer,player)
+            time.sleep(2)
+            if dealer_hit():
+                game_deck.deal_card(dealer)
+            else:
+                dealer_turn = False
+    else:
+        pass
+    clear_output()
+    display_hand(dealer,player)
+    decide_winner(player,dealer)
+    if player.balance == 0:
+        print("Looks like you're out of money...")
+        break
+    play_again = replay()
+    if play_again:
+        clear_output()
+    else:
+        pass
+      
+
+print("Game over, thanks for playing!")
