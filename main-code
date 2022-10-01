@@ -74,6 +74,7 @@ class Scoreboard:
         self.games = 0
         self.won = 0
         self.lost = 0
+        self.draw = 0
         self.winnings = 0
         self.losses = 0
 
@@ -256,28 +257,38 @@ def check_bust(player):
 
 
 def decide_winner(player, dealer):
+    player.scoreboard.games += 1
     if player_bust == True:
         print(f'You went bust, your new balance is {player.balance}$')
+        player.scoreboard.lost += 1
+        player.scoreboard.losses += player.bet
 
     elif dealer_bust == True:
         player.balance += player.bet * 2
         print(f'Dealer went bust, your new balance is {player.balance}$')
+        player.scoreboard.won += 1
+        player.scoreboard.winnings += player.bet * 2
 
     elif player.hand.value > dealer.hand.value:
         player.balance += player.bet * 2
         print(f'You win, your new balance is {player.balance}$ !')
+        player.scoreboard.won += 1
+        player.scoreboard.winnings += player.bet * 2
         if player.hand.value == 21 and player.hand.length == 2:
             player.balance += player.bet * .5
+            player.scoreboard.winnings += player.bet * .5
             print(f'With your Black Jack bonus, you have {player.balance}$ !')
         else:
             pass
 
     elif player.hand.value == dealer.hand.value:
         player.balance += player.bet
+        player.scoreboard.draw += 1
         print(f"It's a draw, your balance is back to {player.balance}$")
     else:
         print(f"Dealer wins, your balance is {player.balance}$")
-
+        player.scoreboard.lost += 1
+        player.scoreboard.losses += player.bet
 
 def replay(player):
     is_valid = False
@@ -354,5 +365,8 @@ while play_again == True:
             pass
     else:
         pass
-
+print(f"{player.name}'s play history:")
+print(f"Games played: {player.scoreboard.games}")
+print(f"Wins: {player.scoreboard.won}   Losses: {player.scoreboard.lost}   Draws: {player.scoreboard.draw}")
+print(f"Total winnings: {player.scoreboard.winnings}$   Total lost: {player.scoreboard.losses}$")
 print("Game over, thanks for playing!")
