@@ -51,6 +51,7 @@ class Player:
         self.balance = 200
         self.hand = Hand()
         self.bet = 0
+        self.scoreboard = Scoreboard()
 
     def __str__(self):
         return f"Name: {self.name}\nBalance: {self.balance}"
@@ -67,6 +68,14 @@ class Hand:
         for card in self.cards:
             print(card)
         return ""
+
+class Scoreboard:
+    def __init__(self):
+        self.games = 0
+        self.won = 0
+        self.lost = 0
+        self.winnings = 0
+        self.losses = 0
 
 #Create a function to clear screen between hands
 def clear():
@@ -249,6 +258,7 @@ def check_bust(player):
 def decide_winner(player, dealer):
     if player_bust == True:
         print(f'You went bust, your new balance is {player.balance}$')
+
     elif dealer_bust == True:
         player.balance += player.bet * 2
         print(f'Dealer went bust, your new balance is {player.balance}$')
@@ -290,7 +300,6 @@ def clear_hand(player):
 play_again = True
 print("Welcome to Fuddy's C-R-A-Z-Y Black Jack!")
 player = Player(initiate_game())
-
 while play_again == True:
     turn_over = False
     dealer_turn = True
