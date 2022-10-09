@@ -2,12 +2,6 @@ import random
 import time
 import os
 
-suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
-ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
-values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8,
-          'Nine': 9, 'Ten': 10, 'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
-
-# Create a card object
 class Card:
     def __init__(self, rank, suit):
         self.rank = rank
@@ -17,8 +11,6 @@ class Card:
     def __str__(self):
         return self.rank + ' of ' + self.suit
 
-
-# Create a deck object
 class Deck:
     def __init__(self):
         self.cards = []
@@ -41,9 +33,6 @@ class Deck:
         player.hand.display_cards.append(print_card(card.rank, card.suit))
         player.hand.set_value()
 
-    # Create a player object
-
-
 class Player:
     def __init__(self, name):
         self.name = name
@@ -54,7 +43,6 @@ class Player:
 
     def __str__(self):
         return f"Name: {self.name}\nBalance: {self.balance}"
-
 
 class Hand:
     def __init__(self):
@@ -78,10 +66,6 @@ class Hand:
             if self.value > 21:
                 self.value -= 10
 
-
-
-
-
 class Scoreboard:
     def __init__(self):
         self.games = 0
@@ -94,17 +78,6 @@ class Scoreboard:
 #Create a function to clear screen between hands
 def clear():
     os.system('cls')
-
-def initiate_game():
-    is_valid = False
-
-    while is_valid == False:
-        name = input("PLease enter your name: ").capitalize()
-        if len(name) > 0:
-            is_valid = True
-        else:
-            pass
-        return name
 
 def print_card(rank, suit):
     suit_display = {'Hearts': "♥", 'Diamonds': "♦", 'Spades': "♠", 'Clubs': "♣"}
@@ -126,11 +99,10 @@ def print_card(rank, suit):
     else:
         return [" _____ ", f"|{card_rank}    |", f"|  {card_suit}  |", f"|    {card_rank}|", " ̅̅̅̅̅ "]
 
-
 def display_hand(player):
     y = len(player.hand.cards)
 
-    if player.name == "Dealer" and turn_over == False:
+    if player.name == "Dealer" and player_turn == True:
         print(f'{dealer.name}: {dealer.hand.cards[1].value}')
         for a, b in zip([" _____ ", "|xxxxx|", "|xxxxx|", "|xxxxx|", " ̅̅̅̅̅ "], dealer.hand.display_cards[1]):
             print(f"{a} {b}")
@@ -164,12 +136,27 @@ def display_hand(player):
                                            player.hand.display_cards[6]):
                 print(f"{a} {b} {c} {d} {e} {f} {g}")
 
+def make_players():
+    is_valid = False
 
-def game_start():
+    while is_valid == False:
+        name = input("PLease enter your name: ").capitalize()
+        if len(name) > 0:
+            is_valid = True
+        else:
+            pass
+    player = Player(name)
+    dealer = Player('Dealer')
+    return player, dealer
+
+def deal_cards():
+    game_deck = Deck()
+    game_deck.shuffle()
     game_deck.deal_card(player)
     game_deck.deal_card(player)
     game_deck.deal_card(dealer)
     game_deck.deal_card(dealer)
+    return game_deck
 
 def ask_bet():
     is_valid = False
@@ -187,7 +174,6 @@ def ask_bet():
                 player.balance -= amount
         except:
             pass
-
 
 def hit_me():
     is_valid = False
@@ -211,7 +197,6 @@ def hit_me():
             else:
                 pass
 
-
 def dealer_hit():
     if player.hand.value == 21 and len(player.hand.cards) == 2:
         return False
@@ -220,22 +205,20 @@ def dealer_hit():
     else:
         return False
 
-
-def check_bust(player):
+def went_bust(player):
     if player.hand.value > 21:
         return True
     else:
         return False
 
-
 def decide_winner():
     player.scoreboard.games += 1
-    if player_bust == True:
+    if went_bust(player):
         print(f'You went bust, your new balance is {player.balance}$')
         player.scoreboard.lost += 1
         player.scoreboard.losses += player.bet
 
-    elif dealer_bust == True:
+    elif went_bust(dealer):
         player.balance += player.bet * 2
         print(f'Dealer went bust, your new balance is {player.balance}$')
         player.scoreboard.won += 1
@@ -279,24 +262,23 @@ def replay():
 def clear_hand():
     player.hand.cards = []
     player.hand.display_cards = []
+    dealer.hand.cards = []
+    dealer.hand.display_cards = []
 
-play_again = True
-print("Welcome to Fuddy's C-R-A-Z-Y Black Jack!")
-player = Player(initiate_game())
-while play_again == True:
-    turn_over = False
-    dealer_turn = True
-    dealer_bust = False
-    player_bust = False
-    game_deck = Deck()
-    game_deck.shuffle()
-    dealer = Player("Dealer")
-    game_start()
+suits = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
+ranks = ('Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King', 'Ace')
+values = {'Two': 2, 'Three': 3, 'Four': 4, 'Five': 5, 'Six': 6, 'Seven': 7, 'Eight': 8,
+          'Nine': 9, 'Ten': 10, 'Jack': 10, 'Queen': 10, 'King': 10, 'Ace': 11}
+playing = True
+print("Welcome to Fuddy's Black Jack!")
+player, dealer = make_players()
+while playing:
+    player_turn = True
+    game_deck = deal_cards()
     ask_bet()
-    while not turn_over:
+    while player_turn:
         clear()
-        if check_bust(player):
-            player_bust = True
+        if went_bust(player):
             break
         else:
             pass
@@ -308,13 +290,12 @@ while play_again == True:
         if get_card:
             game_deck.deal_card(player)
         else:
-            turn_over = True
+            player_turn = False
 
-    if player_bust != True:
-        while dealer_turn == True:
+    if not went_bust(player):
+        while player_turn == False:
             clear()
-            if check_bust(dealer):
-                dealer_bust = True
+            if went_bust(dealer):
                 break
             else:
                 pass
@@ -325,7 +306,7 @@ while play_again == True:
             if dealer_hit():
                 game_deck.deal_card(dealer)
             else:
-                dealer_turn = False
+                player_turn = True
     else:
         pass
     clear()
@@ -333,8 +314,8 @@ while play_again == True:
     print(f'Current bet: {player.bet}')
     display_hand(player)
     decide_winner()
-    play_again = replay()
-    if play_again:
+    playing = replay()
+    if playing:
         clear_hand()
         clear()
         if player.balance == 0:
