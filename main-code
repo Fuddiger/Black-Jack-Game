@@ -127,71 +127,42 @@ def print_card(rank, suit):
         return [" _____ ", f"|{card_rank}    |", f"|  {card_suit}  |", f"|    {card_rank}|", " ̅̅̅̅̅ "]
 
 
-def display_hand():
-    x = len(dealer.hand.cards)
+def display_hand(player):
     y = len(player.hand.cards)
 
-    if turn_over == False:
+    if player.name == "Dealer" and turn_over == False:
         print(f'{dealer.name}: {dealer.hand.cards[1].value}')
         for a, b in zip([" _____ ", "|xxxxx|", "|xxxxx|", "|xxxxx|", " ̅̅̅̅̅ "], dealer.hand.display_cards[1]):
             print(f"{a} {b}")
     else:
-        print(f'{dealer.name}: {dealer.hand.value}')
-        if x == 2:
-            for a, b in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1]):
-                print(f"{a} {b}")
-        elif x == 3:
-            for a, b, c in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1], dealer.hand.display_cards[2]):
-                print(f"{a} {b} {c}")
-        elif x == 4:
-            for a, b, c, d in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1], dealer.hand.display_cards[2],
-                                  dealer.hand.display_cards[3]):
-                print(f"{a} {b} {c} {d}")
-        elif x == 5:
-            for a, b, c, d, e in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],
-                                     dealer.hand.display_cards[2], dealer.hand.display_cards[3],
-                                     dealer.hand.display_cards[4]):
-                print(f"{a} {b} {c} {d} {e}")
-        elif x == 6:
-            for a, b, c, d, e, f in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],
-                                        dealer.hand.display_cards[2], dealer.hand.display_cards[3],
-                                        dealer.hand.display_cards[4], dealer.hand.display_cards[5]):
-                print(f"{a} {b} {c} {d} {e} {f}")
-        elif x == 7:
-            for a, b, c, d, e, f, g in zip(dealer.hand.display_cards[0], dealer.hand.display_cards[1],
-                                           dealer.hand.display_cards[2], dealer.hand.display_cards[3],
-                                           dealer.hand.display_cards[4], dealer.hand.display_cards[5],
-                                           dealer.hand.display_cards[6]):
-                print(f"{a} {b} {c} {d} {e} {f} {g}")
+        print(f'{player.name}: {player.hand.value}')
 
-    print(f'{player.name}: {player.hand.value}')
-    print(f'Bet: {player.bet}$')
-    if y == 2:
-        for a, b in zip(player.hand.display_cards[0], player.hand.display_cards[1]):
-            print(f"{a} {b}")
-    elif y == 3:
-        for a, b, c in zip(player.hand.display_cards[0], player.hand.display_cards[1], player.hand.display_cards[2]):
-            print(f"{a} {b} {c}")
-    elif y == 4:
-        for a, b, c, d in zip(player.hand.display_cards[0], player.hand.display_cards[1], player.hand.display_cards[2],
-                              player.hand.display_cards[3]):
-            print(f"{a} {b} {c} {d}")
-    elif y == 5:
-        for a, b, c, d, e in zip(player.hand.display_cards[0], player.hand.display_cards[1],
-                                 player.hand.display_cards[2], player.hand.display_cards[3],
-                                 player.hand.display_cards[4]):
-            print(f"{a} {b} {c} {d} {e}")
-    elif y == 6:
-        for a, b, c, d, e, f in zip(player.hand.display_cards[0], player.hand.display_cards[1],
-                                    player.hand.display_cards[2], player.hand.display_cards[3],
-                                    player.hand.display_cards[4], player.hand.display_cards[5]):
-            print(f"{a} {b} {c} {d} {e} {f}")
-    elif y == 7:
-        for a, b, c, d, e, f, g in zip(player.hand.display_cards[0], player.hand.display_cards[1],
-                                       player.hand.display_cards[2], player.hand.display_cards[3],
-                                       player.hand.display_cards[4], player.hand.display_cards[5],
-                                       player.hand.display_cards[6]):
-            print(f"{a} {b} {c} {d} {e} {f} {g}")
+        if y == 2:
+            for a, b in zip(player.hand.display_cards[0], player.hand.display_cards[1]):
+                print(f"{a} {b}")
+        elif y == 3:
+            for a, b, c in zip(player.hand.display_cards[0], player.hand.display_cards[1], player.hand.display_cards[2]):
+                print(f"{a} {b} {c}")
+        elif y == 4:
+            for a, b, c, d in zip(player.hand.display_cards[0], player.hand.display_cards[1], player.hand.display_cards[2],
+                                  player.hand.display_cards[3]):
+                print(f"{a} {b} {c} {d}")
+        elif y == 5:
+            for a, b, c, d, e in zip(player.hand.display_cards[0], player.hand.display_cards[1],
+                                     player.hand.display_cards[2], player.hand.display_cards[3],
+                                     player.hand.display_cards[4]):
+                print(f"{a} {b} {c} {d} {e}")
+        elif y == 6:
+            for a, b, c, d, e, f in zip(player.hand.display_cards[0], player.hand.display_cards[1],
+                                        player.hand.display_cards[2], player.hand.display_cards[3],
+                                        player.hand.display_cards[4], player.hand.display_cards[5]):
+                print(f"{a} {b} {c} {d} {e} {f}")
+        elif y == 7:
+            for a, b, c, d, e, f, g in zip(player.hand.display_cards[0], player.hand.display_cards[1],
+                                           player.hand.display_cards[2], player.hand.display_cards[3],
+                                           player.hand.display_cards[4], player.hand.display_cards[5],
+                                           player.hand.display_cards[6]):
+                print(f"{a} {b} {c} {d} {e} {f} {g}")
 
 
 def game_start():
@@ -329,7 +300,10 @@ while play_again == True:
             break
         else:
             pass
-        display_hand()
+
+        display_hand(dealer)
+        print(f'Current bet: {player.bet}')
+        display_hand(player)
         get_card = hit_me()
         if get_card:
             game_deck.deal_card(player)
@@ -344,7 +318,9 @@ while play_again == True:
                 break
             else:
                 pass
-            display_hand()
+            display_hand(dealer)
+            print(f'Current bet: {player.bet}')
+            display_hand(player)
             time.sleep(3)
             if dealer_hit():
                 game_deck.deal_card(dealer)
@@ -353,7 +329,9 @@ while play_again == True:
     else:
         pass
     clear()
-    display_hand()
+    display_hand(dealer)
+    print(f'Current bet: {player.bet}')
+    display_hand(player)
     decide_winner()
     play_again = replay()
     if play_again:
