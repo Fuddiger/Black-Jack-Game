@@ -39,8 +39,7 @@ class Deck:
         card = self.cards.pop()
         player.hand.cards.append(card)
         player.hand.display_cards.append(print_card(card.rank, card.suit))
-        player.hand.value += card.value
-        player.hand.length += 1
+        player.hand.set_value()
 
     # Create a player object
 
@@ -61,7 +60,6 @@ class Hand:
     def __init__(self):
         self.cards = []
         self.display_cards = []
-        self.length = 0
         self.value = 0
 
     def __str__(self):
@@ -69,13 +67,28 @@ class Hand:
             print(card)
         return ""
 
+    def set_value(self):
+        aces = 0
+        self.value = 0
+        for card in self.cards:
+            if card.value == 11:
+                aces += 1
+            self.value += card.value
+        for ace in range(aces):
+            if self.value > 21:
+                self.value -= 10
+
+
+
+
+
 class Scoreboard:
     def __init__(self):
         self.games = 0
         self.won = 0
         self.lost = 0
         self.draw = 0
-        self.winnings = 0
+        self.winnings = 200
         self.losses = 0
 
 #Create a function to clear screen between hands
@@ -114,9 +127,9 @@ def print_card(rank, suit):
         return [" _____ ", f"|{card_rank}    |", f"|  {card_suit}  |", f"|    {card_rank}|", " ̅̅̅̅̅ "]
 
 
-def display_hand(dealer, player, turn_over):
-    x = dealer.hand.length
-    y = player.hand.length
+def display_hand():
+    x = len(dealer.hand.cards)
+    y = len(player.hand.cards)
 
     if turn_over == False:
         print(f'{dealer.name}: {dealer.hand.cards[1].value}')
@@ -187,7 +200,7 @@ def game_start():
     game_deck.deal_card(dealer)
     game_deck.deal_card(dealer)
 
-def ask_bet(player):
+def ask_bet():
     is_valid = False
     print(f"{player.name} you have {player.balance}$")
     while is_valid == False:
@@ -205,10 +218,10 @@ def ask_bet(player):
             pass
 
 
-def hit_me(player):
+def hit_me():
     is_valid = False
-    if player.hand.value == 21 and player.hand.length == 2:
-        print('You drew a Black Jack')
+    if player.hand.value == 21 and len(player.hand.cards) == 2:
+        print('You drew a Black Jack!')
         time.sleep(3)
         return False
     elif player.hand.value == 21:
@@ -228,8 +241,8 @@ def hit_me(player):
                 pass
 
 
-def dealer_hit(dealer, player):
-    if player.hand.value == 21 and player.hand.length == 2:
+def dealer_hit():
+    if player.hand.value == 21 and len(player.hand.cards) == 2:
         return False
     elif dealer.hand.value < 17:
         return True
@@ -238,25 +251,13 @@ def dealer_hit(dealer, player):
 
 
 def check_bust(player):
-    aces = []
-    for x in player.hand.cards:
-        if x.rank == "Ace":
-            aces.append(x.rank)
-        else:
-            pass
-
-    for ace in aces:
-        if player.hand.value > 21:
-            player.hand.value -= 10
-        else:
-            break
     if player.hand.value > 21:
         return True
     else:
         return False
 
 
-def decide_winner(player, dealer):
+def decide_winner():
     player.scoreboard.games += 1
     if player_bust == True:
         print(f'You went bust, your new balance is {player.balance}$')
@@ -267,16 +268,16 @@ def decide_winner(player, dealer):
         player.balance += player.bet * 2
         print(f'Dealer went bust, your new balance is {player.balance}$')
         player.scoreboard.won += 1
-        player.scoreboard.winnings += player.bet * 2
+        player.scoreboard.winnings += player.bet
 
     elif player.hand.value > dealer.hand.value:
         player.balance += player.bet * 2
         print(f'You win, your new balance is {player.balance}$ !')
         player.scoreboard.won += 1
-        player.scoreboard.winnings += player.bet * 2
-        if player.hand.value == 21 and player.hand.length == 2:
-            player.balance += player.bet * .5
-            player.scoreboard.winnings += player.bet * .5
+        player.scoreboard.winnings += player.bet
+        if player.hand.value == 21 and len(player.hand.cards) == 2:
+            player.balance += int(player.bet * .5)
+            player.scoreboard.winnings += int(player.bet * .5)
             print(f'With your Black Jack bonus, you have {player.balance}$ !')
         else:
             pass
@@ -290,9 +291,11 @@ def decide_winner(player, dealer):
         player.scoreboard.lost += 1
         player.scoreboard.losses += player.bet
 
-def replay(player):
+def replay():
     is_valid = False
     while is_valid == False:
+        if player.balance == 0:
+            print('You went broke')
         retry = input("Want to try again?(y/n): ")
         if retry.lower() == 'y' or retry.lower() == 'n':
             if retry.lower() == 'y':
@@ -302,11 +305,9 @@ def replay(player):
         else:
             pass
 
-def clear_hand(player):
+def clear_hand():
     player.hand.cards = []
     player.hand.display_cards = []
-    player.hand.length = 0
-    player.hand.value = 0
 
 play_again = True
 print("Welcome to Fuddy's C-R-A-Z-Y Black Jack!")
@@ -320,8 +321,7 @@ while play_again == True:
     game_deck.shuffle()
     dealer = Player("Dealer")
     game_start()
-    ask_bet(player)
-    check_bust(dealer)
+    ask_bet()
     while not turn_over:
         clear()
         if check_bust(player):
@@ -329,8 +329,8 @@ while play_again == True:
             break
         else:
             pass
-        display_hand(dealer, player,turn_over)
-        get_card = hit_me(player)
+        display_hand()
+        get_card = hit_me()
         if get_card:
             game_deck.deal_card(player)
         else:
@@ -344,20 +344,20 @@ while play_again == True:
                 break
             else:
                 pass
-            display_hand(dealer, player,turn_over)
+            display_hand()
             time.sleep(3)
-            if dealer_hit(dealer,player):
+            if dealer_hit():
                 game_deck.deal_card(dealer)
             else:
                 dealer_turn = False
     else:
         pass
     clear()
-    display_hand(dealer, player,turn_over)
-    decide_winner(player, dealer)
-    play_again = replay(player)
+    display_hand()
+    decide_winner()
+    play_again = replay()
     if play_again:
-        clear_hand(player)
+        clear_hand()
         clear()
         if player.balance == 0:
             player.balance = 200
